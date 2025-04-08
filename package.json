@@ -15,5 +15,13 @@
     "multer": "^1.4.5-lts.2",
     "nodemailer": "^6.10.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nextgen-2025/nextgen-backend-2025.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nextgen-2025/nextgen-backend-2025/issues"
+  },
+  "homepage": "https://github.com/nextgen-2025/nextgen-backend-2025#readme",
   "description": ""
 }

@@ -5,12 +5,13 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cors = require("cors");
-app.use(cors());
+const { error } = require('console');
 
 
 dotenv.config();
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -21,9 +22,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-app.post('/send', upload.single('resume'), async (req, res) => {
-  const { name, yoe } = req.body;
-  const resumePath = req.file.path;
+app.post('/submit-form', upload.single('resume'), async (req, res) => {
+  const { name, email, phone, experience, skills, jobTitle } = req.body;
+  const resumePath = req.file?.path;
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -36,23 +37,33 @@ app.post('/send', upload.single('resume'), async (req, res) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: 'saksamgupta4@gmail.com', // You receiving it
-    subject: 'New Resume Submission',
-    text: `Name: ${name}\nExperience: ${yoe} years`,
-    attachments: [{
+    subject: `New Application for ${jobTitle}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #4CAF50;">New Job Application</h2>
+        <p><strong>Job Title:</strong> ${jobTitle}</p>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Experience:</strong> ${experience} years</p>
+        <p><strong>Skills:</strong> ${skills}</p>
+      </div>
+    `,
+    attachments: req.file ? [{
       filename: req.file.originalname,
       path: resumePath,
-    }],
+    }] : [],
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    fs.unlinkSync(resumePath); // delete file after sending
-    res.send('Email sent successfully!');
+    if (resumePath) fs.unlinkSync(resumePath); // delete file after sending
+    res.status(200).json({message: 'Email sent successfully!'});
   } catch (err) {
-    res.status(500).send('Error sending email: ' + err.message);
+    console.error('Error sending email:', err);
+    res.status(500).send({message: 'Error sending email.', error: err.message});
   }
 });
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log(`Server running`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
