@@ -48,7 +48,7 @@ app.post("/submit-form", upload.single("resume"), async (req, res) => {
     to: "saksamgupta4@gmail.com", // You receiving it
     subject: `New Application for ${jobTitle}`,
     html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color:rgb(48, 167, 175); padding: 20px; border-radius: 5px;">
         <h2 style="color: #4CAF50;">New Job Application</h2>
         <p><strong>Job Title:</strong> ${jobTitle}</p>
         <p><strong>Name:</strong> ${name}</p>
