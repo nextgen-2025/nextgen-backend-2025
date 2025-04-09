@@ -1,12 +1,11 @@
-const express = require('express');
-const multer = require('multer');
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
-const path = require('path');
-const fs = require('fs');
+const express = require("express");
+const multer = require("multer");
+const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
+const path = require("path");
+const fs = require("fs");
 const cors = require("cors");
-const { error } = require('console');
-
+const { error } = require("console");
 
 dotenv.config();
 const app = express();
@@ -17,17 +16,27 @@ app.use(express.urlencoded({ extended: true }));
 
 // Set up file upload
 const storage = multer.diskStorage({
-  destination: 'uploads/',
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+  destination: "uploads/",
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
 const upload = multer({ storage });
 
-app.post('/submit-form', upload.single('resume'), async (req, res) => {
-  const { name, email, phone, experience, skills, jobTitle } = req.body;
+app.post("/submit-form", upload.single("resume"), async (req, res) => {
+  const {
+    name,
+    email,
+    phone,
+    experience,
+    location,
+    skills,
+    currentSalary,
+    expectedSalary,
+    jobTitle,
+  } = req.body;
   const resumePath = req.file?.path;
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -36,7 +45,7 @@ app.post('/submit-form', upload.single('resume'), async (req, res) => {
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: 'saksamgupta4@gmail.com', // You receiving it
+    to: "saksamgupta4@gmail.com", // You receiving it
     subject: `New Application for ${jobTitle}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -45,23 +54,32 @@ app.post('/submit-form', upload.single('resume'), async (req, res) => {
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Experience:</strong> ${experience} years</p>
         <p><strong>Skills:</strong> ${skills}</p>
+        <p><strong>Experience:</strong> ${experience} years</p>
+        <p><strong>Location:</strong> ${location}</p>
+        <p><strong>Current Salary:</strong> ${currentSalary}</p>
+        <p><strong>Expected Salary:</strong> ${expectedSalary}</p>
       </div>
     `,
-    attachments: req.file ? [{
-      filename: req.file.originalname,
-      path: resumePath,
-    }] : [],
+    attachments: req.file
+      ? [
+          {
+            filename: req.file.originalname,
+            path: resumePath,
+          },
+        ]
+      : [],
   };
 
   try {
     await transporter.sendMail(mailOptions);
     if (resumePath) fs.unlinkSync(resumePath); // delete file after sending
-    res.status(200).json({message: 'Email sent successfully!'});
+    res.status(200).json({ message: "Email sent successfully!" });
   } catch (err) {
-    console.error('Error sending email:', err);
-    res.status(500).send({message: 'Error sending email.', error: err.message});
+    console.error("Error sending email:", err);
+    res
+      .status(500)
+      .send({ message: "Error sending email.", error: err.message });
   }
 });
 
