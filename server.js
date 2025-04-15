@@ -45,7 +45,7 @@ app.post("/submit-form", upload.single("resume"), async (req, res) => {
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: "saksamgupta4@gmail.com", // You receiving it
+    to: "hr1@nextgeninfratech.in",
     subject: `New Application for ${jobTitle}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color:rgb(48, 167, 175); padding: 20px; border-radius: 5px;">
