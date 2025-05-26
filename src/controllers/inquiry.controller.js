@@ -10,7 +10,7 @@ const submitInquiry = async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: "saksamgupta4@gmail.com",
+      to: "info@nextgeninfratech.in",
       subject: `New Inquiry from ${name}`,
       html: `
         <div style="font-family: 'Arial', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
