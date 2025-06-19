@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/jobs', jobRoutes);
+app.use('/api', jobRoutes);
 app.use('/api/inquiry', inquiryRoutes);
 
 module.exports = app;
